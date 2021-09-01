@@ -1,11 +1,30 @@
-const axios = require('axios');
+const axios = require('axios').default
+const fs = require('fs')
 
-let data = []
-axios.get("https://jsonplaceholder.typicode.com/posts")
- .then(res => {
-  data = res.data
-  const result = data.filter(items => items.userId === 1);
+const loadData = async (url) => {
+ try {
+  const data = axios.get(url)
+  return data
+ } catch (err) {
+  throw new Error(err)
+ }
+}
+
+
+const nomorDua = async () => {
+ try {
+  const dataPost = await loadData('https://jsonplaceholder.typicode.com/posts')
+  const dataUsers = await loadData('https://jsonplaceholder.typicode.com/users')
+  const result = dataPost.data.map((post) => {
+   return Object.assign({}, post, {
+    user: dataUsers.data.filter((user) => post.userId === user.id)[0]
+   })
+  })
   console.log(result);
- })
- .catch((error) => console.log("Error : " + error))
+ } catch (err) {
+  throw new Error(err)
+ }
 
+}
+
+nomorDua()
