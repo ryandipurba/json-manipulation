@@ -33,37 +33,32 @@ const soal2 = () => {
 // soal2()
 
 // 3. 
-const soal3 = () => {
-  let result = []
-  axios.get("https://randomuser.me/api/?results=20")
-    .then(res => {
-      let data = res.data.results
-      data.map(items => {
-        let title = items.name.title + " "
-        let first = items.name.first + " "
-        let last = items.name.last + ""
-        let email = items.email
-        let phone = items.phone
-        result.push({
-          nama: title + first + last,
-          email: email,
-          phone: phone
-        })
-      })
-      console.log(result);
-    })
-    .catch((error) => console.log("Error : " + error));
+function arrayToCSV(objArray) {
+  const array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray;
+  let str = `${Object.keys(array[0]).map(value => `"${value}"`).join(",")}` + '\r\n';
+
+  return array.reduce((str, next) => {
+    str += `${Object.values(next).map(value => `"${value}"`).join(",")}` + '\r\n';
+    return str;
+  }, str);
 }
-
-// soal3()
-
 
 async function getUser() {
   const response = await axios.get('https://randomuser.me/api/?results=20');
   const result = response.data.results;
 
-  const name = result.map(a => a.name.title + " " + a.name.first + " " + a.name.last)
-  console.log(name);
+  const no1 = result.map(a => a.name.title + " " + a.name.first + " " + a.name.last)
+  const no2 = result.filter(items => items.gender === "male");
+  const no3 = result.map(a => {
+    let name = a.name.title + " " + a.name.first + " " + a.name.last
+    let email = a.email
+    let phone = a.phone
+    return ({ name: name, email: email, phone, phone })
+  })
+  console.log(arrayToCSV(no3));
 }
 
 getUser()
+
+
+
